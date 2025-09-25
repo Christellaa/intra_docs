@@ -3,12 +3,37 @@ version: '3.8'
 services:
   backend:
     build: .
-    container_name: projet
+    container_name: backend
     volumes:
       - .:/app
     ports:
       - "8000:8000"
+    depends_on:
+      - db
+    env_file:
+      - .env
     command: uvicorn backend.main:app --host 0.0.0.0 --port 8000 --reload
+    # networks:
+    #   - network
+
+  db:
+    image: postgres:13
+    container_name: db
+    ports:
+      - "5432:5432"
+    env_file:
+      - .env
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    # networks:
+    #   - network
+
+volumes:
+  postgres_data:
+
+# networks:
+#   network:
+#     driver: bridge
 
 # docker-compose up --build
 # docker-compose down --rmi all --volumes

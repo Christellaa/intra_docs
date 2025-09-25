@@ -1,10 +1,13 @@
 from fastapi import FastAPI
+from backend.db.init_db import init_db
 from backend.api import user
 import logging
 
 logging.basicConfig(level=logging.INFO)
 
 app = FastAPI()
+
+init_db()
 
 @app.get("/")
 def read_root():

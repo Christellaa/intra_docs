@@ -19,4 +19,4 @@ class User(Base):
     role = Column(PgEnum(UserRole, name="user_role", create_type=True), default=UserRole.USER.value, nullable=False)
     created_at = Column(DateTime(timezone=True), server_default=func.now())
 
-    files = relationship("File", back_populates="user", cascade="all, delete-orphan")
+    # files = relationship("File", back_populates="user", cascade="all, delete-orphan")
