@@ -13,5 +13,6 @@ init_db()
 def read_root():
     return {"Hello": "World"}
 
+# app.include_router(auth.router, prefix="/auth", tags=["auth"])
 app.include_router(user.router, prefix="/users", tags=["users"])
-app.include_router(user.router, prefix="/files", tags=["files"])
+# app.include_router(file.router, prefix="/users/{user_id}/files", tags=["files"])
