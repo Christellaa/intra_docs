@@ -2,11 +2,6 @@ import psycopg2
 from psycopg2.extensions import ISOLATION_LEVEL_AUTOCOMMIT
 import os
 from dotenv import load_dotenv
-import logging
-
-logging.basicConfig(level=logging.INFO)
-logger = logging.getLogger(__name__)
-logger.info("Starting database and user creation script")
 
 load_dotenv()
 
@@ -39,24 +34,19 @@ def create_database_and_user():
         cursor.execute(f"SELECT 1 FROM pg_roles WHERE rolname=%s;", (NEW_DB_USER,))
         if not cursor.fetchone():
             cursor.execute(f"CREATE USER \"{NEW_DB_USER}\" WITH PASSWORD %s;", (NEW_DB_PASSWORD,))
-            logger.info(f"User {NEW_DB_USER} created successfully.")
         else:
-            logger.info(f"User {NEW_DB_USER} already exists.")
-
+            print(f"User {NEW_DB_USER} already exists.")
         # Create new database
         cursor.execute(f"SELECT 1 FROM pg_database WHERE datname=%s;", (NEW_DB_NAME,))
         if not cursor.fetchone():
             cursor.execute(f"CREATE DATABASE {NEW_DB_NAME} OWNER \"{NEW_DB_USER}\";")
-            logger.info(f"Database {NEW_DB_NAME} created successfully.")
         else:
-            logger.info(f"Database {NEW_DB_NAME} already exists.")
-
+            print(f"Database {NEW_DB_NAME} already exists.")
         # Grant all privileges on the new database to the new user
         cursor.execute(f"GRANT ALL PRIVILEGES ON DATABASE {NEW_DB_NAME} TO \"{NEW_DB_USER}\";")
-        logger.info(f"Granted all privileges on database {NEW_DB_NAME} to user \"{NEW_DB_USER}\".")
 
     except Exception as e:
-        logger.info(f"An error occurred: {e}")
+        print(f"Error: {e}")
     finally:
         if cursor:
             cursor.close()
