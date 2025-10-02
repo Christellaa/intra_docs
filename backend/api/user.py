@@ -9,9 +9,8 @@ router = APIRouter()
 
 @router.get("/{user_id}", response_model=UserRead)
 def read_user(user_id: int, db: Session = Depends(get_db)):
-    try:
-        user = user_crud.get_user(db, user_id)
-    except Exception as e:
+    user = user_crud.get_user(db, user_id)
+    if not user or user is None:
         raise HTTPException(status_code=404, detail="User not found")
     return user
 
