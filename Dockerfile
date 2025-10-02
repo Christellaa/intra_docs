@@ -6,7 +6,12 @@ COPY . .
 
 ENV PYTHONPATH=/app
 
+RUN apt-get update && apt-get install -y netcat-openbsd && rm -rf /var/lib/apt/lists/*
 RUN pip install --no-cache-dir -r requirements.txt
+
+COPY wait_db.sh .
+RUN chmod +x wait_db.sh
+ENTRYPOINT ["./wait_db.sh"]
 
 CMD ["uvicorn", "backend.main:app", "--host", "0.0.0.0", "--port", "8000", "--reload"]
 
