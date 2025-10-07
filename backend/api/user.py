@@ -10,9 +10,8 @@ public_router = APIRouter()
 
 @router.get("/{user_id}", response_model=UserRead)
 def read_user(user_id: int, db: Session = Depends(get_db), current_user: User = Depends(auth_crud.get_current_user)):
-    try:
-        user = user_crud.get_user(db=db, user_id=user_id)
-    except Exception as e:
+    user = user_crud.get_user(db=db, user_id=user_id)
+    if not user:
         raise HTTPException(status_code=404, detail="User not found")
     if user.id != current_user.id:
         raise HTTPException(status_code=403, detail="Not authorized to access this user")
@@ -20,9 +19,8 @@ def read_user(user_id: int, db: Session = Depends(get_db), current_user: User = 
 
 @router.get("/", response_model=list[UserRead])
 def read_users(search: str | None = None, skip: int = 0, limit: int = 10, db: Session = Depends(get_db), current_user: User = Depends(auth_crud.get_current_user)):
-    try:
-        users = user_crud.get_users(db, search=search, skip=skip, limit=limit)
-    except Exception as e:
+    users = user_crud.get_users(db, search=search, skip=skip, limit=limit)
+    if not users:
         raise HTTPException(status_code=404, detail="Users not found")
     return users
 

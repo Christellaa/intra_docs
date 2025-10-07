@@ -1,8 +1,13 @@
 import redis
 from fastapi import HTTPException
 from datetime import datetime, timezone
+import os
+from dotenv import load_dotenv
 
-r = redis.Redis(host='localhost', port=6379, db=0, decode_responses=True)
+load_dotenv()
+REDIS_HOST = os.getenv("REDIS_HOST")
+PORT_REDIS = int(os.getenv("PORT_REDIS"))
+r = redis.Redis(host=REDIS_HOST, port=PORT_REDIS, db=0, decode_responses=True)
 
 def blacklist_token(request):
 	from backend.crud.auth_crud import decode_token
@@ -17,3 +22,4 @@ def is_token_blacklisted(payload: dict):
     jti = payload.get("jti")
     if jti and r.get(f"blacklist:{jti}"):
         raise HTTPException(status_code=401, detail="Token has been revoked")
+    return False
