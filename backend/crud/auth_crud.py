@@ -4,7 +4,7 @@ from passlib.context import CryptContext
 from backend.db.session import get_db
 from backend.crud.user_crud import get_user_by_username
 from backend.crud.security import get_token_from_request, decode_token
-from backend.crud.redis_client import is_token_blacklisted
+from backend.crud.redis_client import validate_token_not_blacklisted
 
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
@@ -22,7 +22,7 @@ def authenticate_user(db: Session, username: str, password: str):
 def get_current_user(request: Request, db: Session = Depends(get_db)):
     token = get_token_from_request(request)
     payload = decode_token(token)
-    is_token_blacklisted(payload)
+    validate_token_not_blacklisted(payload.get("jti"))
     username: str = payload.get("sub")
     user = get_user_by_username(db, username=username)
     if not user:

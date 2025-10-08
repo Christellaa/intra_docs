@@ -1,6 +1,6 @@
 from fastapi import FastAPI, Depends
 from backend.db.init_db import init_db
-from backend.api import user, auth
+from backend.api import auth, user
 from backend.crud.auth_crud import check_authentication
 
 app = FastAPI()
