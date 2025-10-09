@@ -33,12 +33,4 @@ def logout(access_token: str = Depends(security.get_token_from_request)):
 
 @router.post("/refresh")
 def refresh(request: Request, token: str = Depends(security.get_refresh_token)):
-	response = security.refresh_tokens(request, token)
-	return response
-
-# gestion des refresh token:
-# a chaque appel de /refresh -> verif si refresh token n'est pas expiré et que son iat + max durée n'est pas depassée -> donc qu'il est pas blacklisté (redis)
-# si ok -> on genere un nouveau access token + refresh token + on blacklist l'ancien refresh token
-# si pas ok -> erreur 401 + l'user doit se relog
-
-# gestion des permissions (admin, user) quand on charge les routes: on verif presence + validite du token dans les headers, puis si c'est un admin ou user
+	return security.refresh_tokens(request, token)

@@ -1,8 +1,9 @@
+from fastapi import HTTPException
 from sqlalchemy.orm import Session
 from passlib.context import CryptContext
 
 from backend.models.user_model import User
-from backend.schemas.user_schema import UserCreate
+from backend.schemas.user_schema import UserCreate, UserUpdate
 
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
@@ -27,7 +28,7 @@ def get_users(db: Session, search: str | None = None, skip: int = 0, limit: int 
             (User.first_name.ilike(search_term)) |
             (User.last_name.ilike(search_term))
         )
-    return query.offset(skip).limit(limit).all()
+    return query.order_by(User.id.asc()).offset(skip).limit(limit).all()
 
 def create_user(db: Session, user: UserCreate):
     hashed_pwd = hash_pwd(user.password)
@@ -40,6 +41,23 @@ def create_user(db: Session, user: UserCreate):
         role=user.role
     )
     db.add(db_user)
+    db.commit()
+    db.refresh(db_user)
+    return db_user
+
+def update_user(db: Session, db_user: User, user: UserUpdate, current_user: User):
+    if user.first_name is not None:
+        if (len(user.first_name.strip()) < 2 or len(user.first_name.strip()) > 50):
+            raise HTTPException(status_code=400, detail="Invalid first name")
+        db_user.first_name = user.first_name
+    if user.last_name is not None:
+        if (len(user.last_name.strip()) < 2 or len(user.last_name.strip()) > 50):
+            raise HTTPException(status_code=400, detail="Invalid last name")
+        db_user.last_name = user.last_name
+    if user.role is not None and user.role != db_user.role and user.role in ["admin", "user"]:
+        if current_user.role == "admin":
+            raise HTTPException(status_code=403, detail="Admin users cannot change their own role")
+        db_user.role = user.role
     db.commit()
     db.refresh(db_user)
     return db_user

@@ -21,11 +21,9 @@ def refresh_tokens(request: Request, refresh_token: str):
 		raise HTTPException(status_code=400, detail="Invalid token type")
 	validate_token_not_blacklisted(payload.get("jti"))
 	access_token = get_token_from_request(request, token_type="access")
-
 	payload_access_token = decode_token(access_token)
 	blacklist_token(access_token)
 	blacklist_token(refresh_token)
-
 	return create_tokens(payload_access_token.get("sub"), payload_access_token.get("role"))
 
 def create_tokens(sub: str, role: str):
@@ -76,7 +74,6 @@ def create_token(data: dict, token_type: str = "access"):
 		"iat": now,
 		"type": token_type
 	}
-	print(f"✅ Creating {token_type} token with jti: {jti}")
 	return jwt.encode(payload, SECRET_KEY, algorithm=ALGORITHM)
 
 def get_refresh_token(request: Request):
@@ -85,23 +82,17 @@ def get_refresh_token(request: Request):
 def get_token_from_request(request: Request, token_type: str = "access"):
 	if token_type == "access":
 		token = request.cookies.get("access_token")
-		if token:
-			print(f"🔑 Retrieved access token with jti: {decode_token(token).get('jti')}")
-			return token
-		raise HTTPException(status_code=401, detail="Not authenticated") # not useful but need for checks from functions calling this one
 	elif token_type == "refresh":
 		token = request.cookies.get("refresh_token")
-		if token:
-			print(f"🔄 Retrieved refresh token with jti: {decode_token(token).get('jti')}")
-			return token
-		raise HTTPException(status_code=401, detail="Not authenticated")
 	else:
 		raise HTTPException(status_code=400, detail="Invalid token type")
+	if token:
+		return token
+	raise HTTPException(status_code=401, detail="Not authenticated")
 
 def decode_token(token: str):
 	try:
 		payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
-		print(f"🧩 Decoded token jti: {payload.get('jti')}")
 		validate_token_structure(payload)
 		return payload
 	except ExpiredSignatureError:

@@ -29,6 +29,12 @@ def get_current_user(request: Request, db: Session = Depends(get_db)):
         raise HTTPException(status_code=404, detail="User not found")
     return user
 
+def get_current_admin(request: Request, db: Session = Depends(get_db)):
+    user = get_current_user(request, db)
+    if user.role != "admin":
+        raise HTTPException(status_code=403, detail="Not enough permissions")
+    return user
+
 def check_authentication(request: Request):
     token = get_token_from_request(request)
     decode_token(token)
