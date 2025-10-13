@@ -60,7 +60,7 @@ class UserRead(UserBase):
     email: EmailStr
     created_at: datetime
 
-    model_config = ConfigDict(extra="forbid")
+    model_config = ConfigDict(extra="forbid", from_attributes=True)
 
 class UserUpdate(BaseModel):
     first_name: str | None = None

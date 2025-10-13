@@ -1,4 +1,4 @@
-from sqlalchemy import Column, Integer, String, DateTime, func
+from sqlalchemy import Column, Integer, String, DateTime, func, ForeignKey
 from backend.db.base import Base
 from sqlalchemy.orm import relationship
 from sqlalchemy.types import Enum as PgEnum
@@ -16,8 +16,8 @@ class File(Base):
     path = Column(String(500), nullable=False)
     visibility = Column(PgEnum(FileVisibility, name="file_visibility", create_type=True), default=FileVisibility.PRIVATE.value, nullable=False)
     uploaded_at = Column(DateTime(timezone=True), server_default=func.now())
-    user_id = Column(Integer, nullable=False)
+    user_id = Column(Integer, ForeignKey('users.id'), nullable=False)
 
-    # user = relationship("User", back_populates="files")
+    user = relationship("User", back_populates="files")
 
 
