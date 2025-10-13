@@ -7,8 +7,8 @@ import time
 
 load_dotenv()
 REDIS_HOST = os.getenv("REDIS_HOST")
-PORT_REDIS = int(os.getenv("PORT_REDIS"))
-r = redis.Redis(host=REDIS_HOST, port=PORT_REDIS, db=0, decode_responses=True)
+REDIS_PORT = int(os.getenv("REDIS_PORT"))
+r = redis.Redis(host=REDIS_HOST, port=REDIS_PORT, db=0, decode_responses=True)
 
 def blacklist_token(token: str):
 	from backend.crud.auth_crud import decode_token
