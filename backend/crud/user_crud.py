@@ -46,16 +46,12 @@ def create_user(db: Session, user: UserCreate):
     return db_user
 
 def update_user(db: Session, db_user: User, user: UserUpdate, current_user: User):
-    if user.first_name is not None:
-        if (len(user.first_name.strip()) < 2 or len(user.first_name.strip()) > 50):
-            raise HTTPException(status_code=400, detail="Invalid first name")
+    if user.first_name is not None and user.first_name != db_user.first_name:
         db_user.first_name = user.first_name
-    if user.last_name is not None:
-        if (len(user.last_name.strip()) < 2 or len(user.last_name.strip()) > 50):
-            raise HTTPException(status_code=400, detail="Invalid last name")
+    if user.last_name is not None and user.last_name != db_user.last_name:
         db_user.last_name = user.last_name
     if user.role is not None and user.role != db_user.role and user.role in ["admin", "user"]:
-        if current_user.role == "admin":
+        if current_user.id == db_user.id and current_user.role == "admin":
             raise HTTPException(status_code=403, detail="Admin users cannot change their own role")
         db_user.role = user.role
     db.commit()

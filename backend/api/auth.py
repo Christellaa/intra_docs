@@ -22,9 +22,9 @@ def login(form_data: OAuth2PasswordRequestForm = Depends(), db: Session = Depend
 	return response
 
 @router.post("/logout")
-def logout(access_token: str = Depends(security.get_token_from_request)):
+def logout(request: Request, access_token: str = Depends(security.get_token_from_request)):
 	blacklist_token(access_token)
-	refresh_token = security.get_refresh_token()
+	refresh_token = security.get_refresh_token(request)
 	blacklist_token(refresh_token)
 	response = JSONResponse(content={"message": "Logout successful"})
 	response.delete_cookie("access_token")

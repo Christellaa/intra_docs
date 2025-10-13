@@ -63,8 +63,18 @@ class UserRead(UserBase):
     model_config = ConfigDict(extra="forbid", from_attributes=True)
 
 class UserUpdate(BaseModel):
-    first_name: str | None = Field(None, min_length=1, max_length=50)
-    last_name: str | None = Field(None, min_length=1, max_length=50)
+    first_name: str | None = None
+    last_name: str | None = None
     role: UserRole | None = None
+
+    @field_validator('first_name', 'last_name')
+    @classmethod
+    def validate_names(cls, value: str) -> str:
+        if len(value.strip()) < 2:
+            raise ValueError("Must be at least 2 non-whitespace characters")
+        if len(value.strip()) > 50:
+            raise ValueError("Must be at most 50 characters")
+        value = value.strip()
+        return value
 
     model_config = ConfigDict(extra="forbid")
