@@ -1,4 +1,4 @@
-from pydantic import BaseModel, EmailStr, Field, ConfigDict, model_validator, field_validator
+from pydantic import BaseModel, EmailStr, ConfigDict, model_validator, field_validator
 from datetime import datetime
 from enum import Enum
 
@@ -60,7 +60,7 @@ class UserRead(UserBase):
     email: EmailStr
     created_at: datetime
 
-    model_config = ConfigDict(extra="forbid", from_attributes=True)
+    model_config = ConfigDict(extra="forbid")
 
 class UserUpdate(BaseModel):
     first_name: str | None = None

@@ -1,22 +1,30 @@
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, ConfigDict
 from datetime import datetime
 from enum import Enum
 
 class FileVisibility(str, Enum):
     PRIVATE = "private"
-    READ_ONLY = "read_only"
-    READ_WRITE = "read_write"
+    PUBLIC = "public"
 
 class FileBase(BaseModel):
     filename: str = Field(..., max_length=255)
     path: str = Field(..., max_length=500)
+    visibility: FileVisibility = FileVisibility.PRIVATE
 
 class FileCreate(FileBase):
     pass
 
+    model_config = ConfigDict(extra="forbid")
+
 class FileRead(FileBase):
     id: int
     uploaded_at: datetime
-    visibility: FileVisibility = FileVisibility.PRIVATE
     user_id: int
-    model_config = {"from_attributes": True}
+
+    model_config = ConfigDict(extra="forbid")
+
+class FileUpdate(BaseModel):
+    filename: str | None = Field(None, max_length=255)
+    visibility: FileVisibility | None = None
+
+    model_config = ConfigDict(extra="forbid")

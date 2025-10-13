@@ -1,4 +1,4 @@
-from sqlalchemy import Column, Integer, String, DateTime, func, Boolean
+from sqlalchemy import Column, Integer, String, DateTime, func
 from backend.db.base import Base
 from sqlalchemy.orm import relationship
 from sqlalchemy.types import Enum as PgEnum
@@ -6,8 +6,7 @@ from enum import Enum
 
 class FileVisibility(str, Enum):
     PRIVATE = "private"
-    READ_ONLY = "read_only"
-    READ_WRITE = "read_write"
+    PUBLIC = "public"
 
 class File(Base):
     __tablename__ = 'files'

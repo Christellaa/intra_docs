@@ -108,11 +108,11 @@ def validate_token_structure(payload: dict):
 	type = payload.get("type")
 	iat = payload.get("iat")
 	if not sub or not jti or not exp or not type or not iat:
-		raise HTTPException(status_code=400, detail="Invalid token A structure")
+		raise HTTPException(status_code=400, detail="Invalid token structure")
 	if type == "access":
 		if not role or role not in ["user", "admin"]:
-			raise HTTPException(status_code=400, detail="Invalid token B structure")
+			raise HTTPException(status_code=400, detail="Invalid token structure")
 	if role and type == "refresh":
-		raise HTTPException(status_code=400, detail="Invalid token C structure")
+		raise HTTPException(status_code=400, detail="Invalid token structure")
 	if type not in ["access", "refresh"]:
 		raise HTTPException(status_code=400, detail="Invalid token type")

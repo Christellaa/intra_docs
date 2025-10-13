@@ -1,4 +1,4 @@
-from sqlalchemy import Column, Integer, String, DateTime, func, Boolean
+from sqlalchemy import Column, Integer, String, DateTime, func
 from backend.db.base import Base
 from sqlalchemy.orm import relationship
 from sqlalchemy.types import Enum as PgEnum
