@@ -1,4 +1,5 @@
 from backend.models.file_model import File
+from backend.enums import FileVisibility
 
 def create_file(db, user_id, file):
 	db_file = File(
@@ -19,7 +20,7 @@ def get_file_by_id_and_user(db, file_id, user_id):
 	return db.query(File).filter(File.id == file_id, File.user_id == user_id).first()
 
 def get_only_public_files_by_user(db, user_id):
-	return db.query(File).filter(File.user_id == user_id, File.visibility == "public").all()
+	return db.query(File).filter(File.user_id == user_id, File.visibility == FileVisibility.PUBLIC).all()
 
 def get_files_by_user(db, user_id):
 	return db.query(File).filter(File.user_id == user_id).all()

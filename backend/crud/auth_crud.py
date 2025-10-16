@@ -5,6 +5,7 @@ from backend.db.session import get_db
 from backend.crud.user_crud import get_user_by_username
 from backend.crud.security import get_token_from_request, decode_token
 from backend.crud.redis_client import validate_token_not_blacklisted
+from backend.enums import UserRole
 
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
@@ -31,7 +32,7 @@ def get_current_user(request: Request, db: Session = Depends(get_db)):
 
 def get_current_admin(request: Request, db: Session = Depends(get_db)):
     user = get_current_user(request, db)
-    if user.role != "admin":
+    if user.role != UserRole.ADMIN:
         raise HTTPException(status_code=403, detail="Not enough permissions")
     return user
 

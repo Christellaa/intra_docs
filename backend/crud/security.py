@@ -7,6 +7,7 @@ import os
 from dotenv import load_dotenv
 import uuid
 from backend.crud.redis_client import validate_token_not_blacklisted, blacklist_token
+from backend.enums import UserRole
 
 load_dotenv()
 
@@ -110,7 +111,7 @@ def validate_token_structure(payload: dict):
 	if not sub or not jti or not exp or not type or not iat:
 		raise HTTPException(status_code=400, detail="Invalid token structure")
 	if type == "access":
-		if not role or role not in ["user", "admin"]:
+		if not role or role not in [UserRole.USER, UserRole.ADMIN]:
 			raise HTTPException(status_code=400, detail="Invalid token structure")
 	if role and type == "refresh":
 		raise HTTPException(status_code=400, detail="Invalid token structure")

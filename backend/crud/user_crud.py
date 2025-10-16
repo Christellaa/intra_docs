@@ -1,9 +1,9 @@
 from fastapi import HTTPException
 from sqlalchemy.orm import Session
 from passlib.context import CryptContext
-
 from backend.models.user_model import User
 from backend.schemas.user_schema import UserCreate, UserUpdate
+from backend.enums import UserRole
 
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
@@ -50,8 +50,8 @@ def update_user(db: Session, db_user: User, user: UserUpdate, current_user: User
         db_user.first_name = user.first_name
     if user.last_name is not None and user.last_name != db_user.last_name:
         db_user.last_name = user.last_name
-    if user.role is not None and user.role != db_user.role and user.role in ["admin", "user"]:
-        if current_user.id == db_user.id and current_user.role == "admin":
+    if user.role is not None and user.role != db_user.role and user.role in [UserRole.ADMIN, UserRole.USER]:
+        if current_user.id == db_user.id and current_user.role == UserRole.ADMIN:
             raise HTTPException(status_code=403, detail="Admin users cannot change their own role")
         db_user.role = user.role
     db.commit()

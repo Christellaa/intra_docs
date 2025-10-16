@@ -1,15 +1,12 @@
 from pydantic import BaseModel, EmailStr, ConfigDict, model_validator, field_validator
 from datetime import datetime
-from enum import Enum
-
-class UserRole(str, Enum):
-    ADMIN = "admin"
-    USER = "user"
+from backend.enums import UserRole, UserStatus
 
 class UserBase(BaseModel):
     first_name: str
     last_name: str
     role: UserRole = UserRole.USER
+    status: UserStatus = UserStatus.ACTIVE
 
 class UserCreate(UserBase):
     password: str
@@ -59,6 +56,8 @@ class UserRead(UserBase):
     username: str
     email: EmailStr
     created_at: datetime
+    role: UserRole
+    status: UserStatus
 
     model_config = ConfigDict(extra="forbid", from_attributes=True)
 
@@ -76,5 +75,7 @@ class UserUpdate(BaseModel):
             raise ValueError("Must be at most 50 characters")
         value = value.strip()
         return value
+    
+    # TODO: modify username and email if first_name or last_name is updated
 
     model_config = ConfigDict(extra="forbid")
