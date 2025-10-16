@@ -18,3 +18,4 @@ class User(Base):
     status = Column(PgEnum(UserStatus, name="user_status", create_type=True), default=UserStatus.ACTIVE.value, nullable=False)
 
     files = relationship("File", back_populates="user", cascade="all, delete-orphan")
+    logs = relationship("Log", back_populates="user", cascade="all, delete-orphan")
